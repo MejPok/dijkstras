@@ -11,6 +11,7 @@
             {
                 dijkstra.graph[i] = new List<Edge>();
             }
+            int source = 0;
 
             dijkstra.graph[0].Add(new Edge(1, 2));
             dijkstra.graph[0].Add(new Edge(2, 5));
@@ -21,11 +22,22 @@
             dijkstra.graph[2].Add(new Edge(0, 5));
             dijkstra.graph[2].Add(new Edge(1, 2));
 
-            dijkstra.SolveDijktra(0);
+            dijkstra.SolveDijktra(source);
             foreach(int distance in dijkstra.distances)
             {
                 Console.WriteLine(distance);
             }
+            Console.WriteLine("cesta do dvojky");
+
+            
+            int target = 2;
+            
+            while(source != target)
+            {
+                target = dijkstra.perviousParent[target];
+                Console.WriteLine(target);
+            }
+
 
         }
 
@@ -35,9 +47,11 @@
     {
         public List<Edge>[] graph;
         public int[] distances;
+        public int[] perviousParent;
         public void SolveDijktra(int startAt)
         {
             distances = new int[graph.Length]; 
+            perviousParent = new int[graph.Length];
             bool[] visited = new bool[graph.Length];
 
             for(int i = 0; i < distances.Length; i++) //nastavim max hodnoty jelikoz neznam vzdalenosti
@@ -66,10 +80,12 @@
 
                     if (visited[to])
                         continue;
+
                     int newDistance = distances[current] + weight;
 
                     if (newDistance < distances[to])
                     {
+                        perviousParent[to] = current;
                         distances[to] = newDistance;
                         priorityQueue.Enqueue(to, newDistance);
                     }
